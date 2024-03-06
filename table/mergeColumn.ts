@@ -170,7 +170,7 @@ export const getColumnValueMaxWidth = <T>(rows: T[], columns: string[], options:
             if (typeof getExtraWidth === 'function') {
                 extraWidth = toSafeInteger(getExtraWidth(row, column));
             }
-            let width = Math.max(result[column] || 0, getTextWidth(text.toString()) + extraWidth);
+            let width = Math.max(result[column] || 0, getTextWidth((text || '').toString()) + extraWidth);
             width = min > 0 ? Math.max(min, width) : width;
             result[column] = max > 0 ? Math.min(max, width) : width;
         });
