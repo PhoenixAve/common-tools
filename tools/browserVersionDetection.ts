@@ -25,9 +25,9 @@ const SYSTEM_OS_URL = (() => {
     const agent = navigator.userAgent.toLowerCase();
     const urls = {
         'linux': 'https://google.cn/intl/zh-CN/chrome',
-        'mac': 'https://update-assets.sankuai.com/it/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6/%E7%AC%AC%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6/Chrome/GoogleChrome-107.0.5304.87.pkg',
-        'win32': 'https://update-assets.sankuai.com/it/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6/%E7%AC%AC%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6/Chrome/googlechromestandaloneenterprise-107.0.5304.88.msi',
-        'win64': 'https://update-assets.sankuai.com/it/%E5%8A%9E%E5%85%AC%E8%BD%AF%E4%BB%B6/%E7%AC%AC%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6/Chrome/googlechromestandaloneenterprise64-107.0.5304.88.msi',
+        'mac': 'mac下载地址',
+        'win32': 'win32下载地址',
+        'win64': 'win64下载地址',
     };
     if (agent.indexOf('win32') >= 0 || agent.indexOf('wow32') >= 0) {
         return urls['win32'];
@@ -277,10 +277,10 @@ class Browser {
         return SYSTEM_OS_URL;
     }
     get imgSrcDark() {
-        return 'https://s3plus.meituan.net/v1/mss_0a7f4c7b6e8342d9985d10a078f28f6f/production/images/browser_dark.svg';
+        return '暗色提示图';
     }
     get imgSrcLight() {
-        return 'https://s3plus.meituan.net/v1/mss_0a7f4c7b6e8342d9985d10a078f28f6f/production/images/browser_light.svg';
+        return '白色提示图';
     }
     get eventCID() {
         return 'c_databp_tnjss36d';
