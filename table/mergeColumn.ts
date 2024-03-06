@@ -103,13 +103,14 @@ export const getRowSpan = (prop, rowIndex, rowSpanMap) => {
     }
 };
 
+
 /**
  * 获取文字宽度
  * @param text
  * @param style
  * @returns
  */
-export const getTextWidth = (text: string, style?: { fontStyle: string, fontSize: number, fontWeight: string, fontFamily: string }) => {
+export const getTextWidth = (text: string, style?: { fontStyle?: string, fontSize?: number, fontWeight?: string, fontFamily?: string }) => {
     style = Object.assign({ fontSize: 12, fontStyle: 'normal', fontWeight: 'normal', fontFamily: 'PingFang SC,serif' }, style);
     // 获取Canvas元素
     function createCanvas(): { canvas: HTMLCanvasElement, context: CanvasRenderingContext2D } {
@@ -139,23 +140,39 @@ export const getTextWidth = (text: string, style?: { fontStyle: string, fontSize
     return Math.ceil(context.measureText(text).width);
 };
 
+interface GetColumnMaxWidthOptionsVo<T> {
+    // 取单元格的值的函数
+    getValue: (row: T, columnKey: string) => string | number;
+    // 额外需要增加的宽度，例如小图标
+    getExtraWidth?: (row: T, column: string) => number;
+    // 列最小宽度
+    minWidth?: number | ((row: T, column: string) => number);
+    // 列最大宽度
+    maxWidth?: number | ((row: T, column: string) => number);
+}
+
 /**
- * 获取某些列的值的最大文本宽度
+ * 根据列的内容动态计算列的列宽
  * @param rows
  * @param columns
- * @param getExtraWidth 额外需要增加的宽度，例如小图标
+ * @param options
  * @returns
  */
-export const getColumnValueMaxWidth = (rows: TableRowVo[], columns: string[], getExtraWidth?: (row: TableRowVo, column: string) => number) => {
+export const getColumnValueMaxWidth = <T>(rows: T[], columns: string[], options: GetColumnMaxWidthOptionsVo<T>): Record<string, number> => {
+    const { getValue, getExtraWidth, minWidth = -1, maxWidth = -1 } = options;
     const result = {};
     rows.forEach(row => {
         columns.forEach(column => {
-            const text: string | number = row.value[column].value;
+            const min = typeof minWidth === 'function' ? minWidth(row, column) : minWidth;
+            const max = typeof maxWidth === 'function' ? maxWidth(row, column) : maxWidth;
+            const text: string | number = getValue(row, column);
             let extraWidth = 0;
             if (typeof getExtraWidth === 'function') {
                 extraWidth = toSafeInteger(getExtraWidth(row, column));
             }
-            result[column] = Math.max(result[column] || 0, getTextWidth(text.toString()) + extraWidth);
+            let width = Math.max(result[column] || 0, getTextWidth(text.toString()) + extraWidth);
+            width = min > 0 ? Math.max(min, width) : width;
+            result[column] = max > 0 ? Math.min(max, width) : width;
         });
     });
     return result;
