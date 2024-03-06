@@ -178,3 +178,84 @@ export function makeSafelyResizeCallback(cb: () => void) {
         });
     };
 }
+
+
+
+type InputValueVo = string | number | null | undefined;
+
+/**
+ * 判断是否是数字
+ * @param value
+ * @param defaultValue
+ * @returns
+ */
+const isNotNumber = (value: InputValueVo) => {
+    return value === null || value === undefined || isNaN(value as number);
+};
+
+/**
+ * 将值转为数字
+ * @param value
+ * @returns
+ */
+export const toNumber = (value: InputValueVo): number => {
+    return isNaN(value as number) ? 0 : Number(value);
+};
+
+/**
+ * 数字变为千分位，digits不传则不处理小数位数，但是最多保留6位，否则保留digits位小数
+ * @param value
+ * @param digits
+ * @param defaultValue
+ * @returns
+ */
+export const toThousands = (value: InputValueVo, digits?: number, defaultValue = '0'): string => {
+    if (value === 0) {
+        return '0';
+    }
+    if (isNotNumber(value)) {
+        return defaultValue;
+    }
+    const val = typeof value === 'number' ? value : parseFloat(value as string);
+    return val.toLocaleString(undefined, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits !== undefined ? digits : 6,
+    });
+};
+
+/**
+ * 数字保留n为小数
+ * @param value
+ * @param digits
+ * @param defaultValue
+ * @returns
+ */
+export const toFixed = (value: InputValueVo, digits = 2, defaultValue = '0'): string => {
+    if (value === 0) {
+        return Number(0).toFixed(digits);
+    }
+    if (isNotNumber(value)) {
+        return defaultValue;
+    }
+    const val = typeof value === 'number' ? value : parseFloat(value as string);
+    return val.toFixed(digits);
+};
+
+/**
+ * 数字变为百分比
+ * @param value
+ * @param digits
+ * @param defaultValue
+ * @returns
+ */
+export const toPercent = (value: InputValueVo, digits = 2, defaultValue = '0'): string => {
+    if (value === 0) {
+        return toFixed(0, digits, defaultValue) + '%';
+    }
+    if (isNotNumber(value)) {
+        return defaultValue;
+    }
+    const val = typeof value === 'number' ? value : parseFloat(value as string);
+    return (val * 100).toFixed(digits) + '%';
+};
+
